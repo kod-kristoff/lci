@@ -1,6 +1,6 @@
-project: rnshah9/mayhem-lci
+project: lci
 target: lci
 
 cmds:
-  - cmd: /repo/build/lci @@
+  - cmd: /repo/build/lci /test.lol
     filepath: /test.lol
