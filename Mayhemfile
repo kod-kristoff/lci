@@ -2,5 +2,4 @@ project: lci
 target: lci
 
 cmds:
-  - cmd: /repo/build/lci /test.lol
-    filepath: /test.lol
+  - cmd: /install/bin/lci @@
