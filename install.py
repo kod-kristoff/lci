@@ -7,8 +7,8 @@ import os
 # Checks if a string is a positive integer
 def positiveInt(string):
   value = int(string)
-  if not value >= 1:
-    msg = string + " is not a positive integer"
+  if value < 1:
+    msg = f"{string} is not a positive integer"
     raise argparse.ArgumentTypeError(msg)
   return value
 
@@ -21,17 +21,14 @@ the errorMsg is displayed.
 """
 def runSubProc(command, description, errorMsg, output):
   msg = description
-  msg += "and writing results to " + output +"."
+  msg += f"and writing results to {output}."
   print(msg + "\n")
 
   outputFile = open(output, "w")
-  if os.name == "nt":
-    proc = subprocess.Popen(command, stdout=outputFile, stderr=subprocess.STDOUT, shell=True)
-  else:
-    proc = subprocess.Popen(command, stdout=outputFile, stderr=subprocess.STDOUT, shell=True)
+  proc = subprocess.Popen(command, stdout=outputFile, stderr=subprocess.STDOUT, shell=True)
   proc.wait()
   if proc.returncode != 0:
-    print("Error installing: " + errorMsg)
+    print(f"Error installing: {errorMsg}")
     sys.exit(1)
 
 # Remove the CMakeCache.txt so we can garuntee a fresh configure
@@ -72,28 +69,28 @@ runSubProc(
   "configure.out")
 
 runSubProc(
-  [makeCommand, "-j"+j],
-  "Running make ",
-  "There was a make error",
-  "make.out")
+    [makeCommand, f"-j{j}"],
+    "Running make ",
+    "There was a make error",
+    "make.out",
+)
 
 
 if args.buildDocs:
   runSubProc(
-    [makeCommand, "-j"+j, "docs"],
-    "Building documentation ",
-    "There was a documentation building error",
-    "docs.out")
+      [makeCommand, f"-j{j}", "docs"],
+      "Building documentation ",
+      "There was a documentation building error",
+      "docs.out",
+  )
 
 runSubProc(
-  makeCommand + " install",
-  "Installing ",
-  "There was an installation error",
-  "install.out")
+    f"{makeCommand} install",
+    "Installing ",
+    "There was an installation error",
+    "install.out",
+)
 
 if args.runTests:
-  runSubProc(
-    ["ctest", "-j"+j],
-    "Testing ",
-    "There was a testing error",
-    "test.out")
+  runSubProc(["ctest", f"-j{j}"], "Testing ", "There was a testing error",
+             "test.out")
