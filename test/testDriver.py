@@ -5,7 +5,7 @@ import tempfile
 import argparse
 
 MEMERR = 127
-  
+
 parser = argparse.ArgumentParser(description="Driver for lci tests")
 parser.add_argument('pathToLCI', help="The absolute path the the lci executable")
 parser.add_argument('lolcodeFile', help="The absolute path to the lolcode file to test")
@@ -17,20 +17,20 @@ parser.add_argument('-m', '--memCheck', action='store_true', help="Do a memory c
 args = parser.parse_args()
 
 
-if args.inputFile == None:
+if args.inputFile is None:
   print("Not using an input file")
 else:
-  print("Using input file: " + args.inputFile.name) 
+  print(f"Using input file: {args.inputFile.name}") 
 
 if args.expectError:
   print("Expecting an error") 
 else:
   print("Not expecting an error")
 
-if args.outputFile == None:
+if args.outputFile is None:
   print("Not using an output file")
 else:
-  print("Using output file: " + args.outputFile.name) 
+  print(f"Using output file: {args.outputFile.name}") 
 
 if args.memCheck:
   print("Doing memory check.")
@@ -44,13 +44,9 @@ if args.outputFile != None:
 
 command = []
 if args.memCheck:
-  command.append("valgrind")
-  command.append("-q")
-  command.append("--leak-check=full")
-  command.append("--error-exitcode=" + str(MEMERR))
-command.append(args.pathToLCI)
-command.append(args.lolcodeFile)
-
+  command.extend(("valgrind", "-q", "--leak-check=full",
+                  f"--error-exitcode={MEMERR}"))
+command.extend((args.pathToLCI, args.lolcodeFile))
 print("Command: " + " ".join(command))
 
 p = subprocess.Popen(command, stdin=args.inputFile, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -68,10 +64,10 @@ if args.expectError:
     print("Success!")
     print("Error:")
     print(results[1])
- 
+
 if args.outputFile:
   if p.returncode != 0:
-    print("Failure! Return error code: " + str(p.returncode))
+    print(f"Failure! Return error code: {str(p.returncode)}")
     sys.exit(1)
   elif expectedOutput != results[0]:
     print("Expected output didn't match!")
